@@ -28,7 +28,7 @@ def get_dataset(input_file):
 
 
 class Reader(StreamElement):
-  log = logging.getLogger('lnd.input')
+  log = logging.getLogger('pewpew.reader')
 
   def __init__(self, exit_flag, inqueue=None, outqueue=None, **kwargs):
     super(Reader, self).__init__(exit_flag, inqueue=None,

@@ -5,7 +5,7 @@ import os
 
 
 class Writer(StreamElement):
-  log = logging.getLogger('lnd.output')
+  log = logging.getLogger('pewpew.writer')
 
   def __init__(self, exit_flag, inqueue=None, outqueue=None, **kwargs):
     super(Writer, self).__init__(exit_flag, inqueue=None,

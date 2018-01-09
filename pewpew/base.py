@@ -17,7 +17,7 @@ class CompletedOp(object):
 
 class StreamElement(Process):
 
-  log = logging.getLogger('pew.streamelement')
+  log = logging.getLogger('pewpew.streamelement')
   __metaclass__ = ABCMeta
 
   def __init__(self, exit_flag, inqueue=None, outqueue=None, **kwargs):
@@ -78,7 +78,7 @@ class StreamElement(Process):
     self.log.info("received completedop from upstream")
     output = self.on_completion()
     if self.valid_data(output):
-      self.put_data(output)
+      self.put_data(data=output)
 
   @signal_exit_on_failure
   def event_loop(self):
