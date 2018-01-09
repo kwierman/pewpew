@@ -10,7 +10,6 @@ import unittest
 import pytest
 import sys
 from contextlib import contextmanager
-from click.testing import CliRunner
 
 from pewpew import cli
 
@@ -36,9 +35,4 @@ class TestPewpew(unittest.TestCase):
         pass
 
     def test_command_line_interface(self):
-        runner = CliRunner()
-        result = runner.invoke(cli.main)
-        assert result.exit_code == 0
-        help_result = runner.invoke(cli.main, ['--help'])
-        assert help_result.exit_code == 0
-        assert '--help  Show this message and exit.' in help_result.output
+        pass
