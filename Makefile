@@ -21,6 +21,7 @@ test:
 docs:
 	rm -f docs/pewpew.rst
 	rm -f docs/modules.rst
+	pip install -r requirements_doc.txt
 	sphinx-apidoc -o docs/ pewpew
 	$(MAKE) -C docs clean
 	$(MAKE) -C docs html
