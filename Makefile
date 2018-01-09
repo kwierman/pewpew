@@ -18,6 +18,10 @@ clean-pyc:
 test:
 	pytest --flake8
 
+travis_test:
+	flake8 pewpew
+	pytest .
+
 docs:
 	rm -f docs/pewpew.rst
 	rm -f docs/modules.rst
