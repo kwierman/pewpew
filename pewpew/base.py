@@ -34,7 +34,7 @@ class StreamElement(Process):
             except Exception as e:
                 self.log.info("signaling exit to all processes")
                 self.exit_flag.value = False
-                raise
+                raise e
         return wrapped
 
     def run(self):
