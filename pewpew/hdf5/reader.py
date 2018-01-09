@@ -1,4 +1,4 @@
-from ..base import StreamElement, NullOp, CompletedOp
+from ..base import StreamElement
 import logging
 import h5py
 import os
@@ -70,7 +70,7 @@ class Reader(StreamElement):
                     self.file = None
                     self.file_iter = None
                 else:
-                    return CompletedOp()
+                    return None
             except Exception as e:
                 self.log.warning(e)
                 self.file = None
@@ -81,7 +81,7 @@ class Reader(StreamElement):
             msg = "hit end of file at {} event(s)"
             self.log.info(msg.format(self.event_number + 1))
             self.file = None
-            return NullOp()
+            return self.process(data)
         for dataset in self._read_list_:
             try:
                 tmp = self.file[dataset][self.event_number]
@@ -89,5 +89,5 @@ class Reader(StreamElement):
             except Exception as e:
                 self.log.warning(e)
                 self.file = None
-                return NullOp()
+                return self.process(data)
         return self.data

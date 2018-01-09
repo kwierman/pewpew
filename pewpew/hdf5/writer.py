@@ -1,4 +1,4 @@
-from ..base import StreamElement, NullOp
+from ..base import StreamElement
 import logging
 import h5py
 import os
@@ -48,7 +48,6 @@ class Writer(StreamElement):
         self.log.info("Closing out file and stream")
         self.output_file.close()
         self.output_file = None
-        self.exit_flag.value = False
 
     def process(self, data):
         if self.n_events is not None:
@@ -86,4 +85,3 @@ class Writer(StreamElement):
         self.process_data(data['data'])
         if process_meta:
             self.process_metadata(data['meta'])
-        return NullOp()
