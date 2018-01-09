@@ -29,7 +29,8 @@ setup(
         ]
     },
     include_package_data=True,
-    install_requires=reqs,
+    install_requires=install_reqs,
+    setup_requires=reqs,
     license="MIT license",
     zip_safe=False,
     keywords='pewpew',

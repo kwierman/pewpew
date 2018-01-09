@@ -1,3 +1,2 @@
-sphinx
 pytest
 pytest-flake8
