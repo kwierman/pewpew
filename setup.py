@@ -31,7 +31,7 @@ setup(
         ]
     },
     include_package_data=True,
-    install_requires=[],
+    install_requires=reqs,
     license="MIT license",
     zip_safe=False,
     keywords='pewpew',
@@ -50,5 +50,5 @@ setup(
     ],
     test_suite='tests',
     tests_requires=reqs,
-    setup_requires=[]
+    setup_requires=reqs
 )
