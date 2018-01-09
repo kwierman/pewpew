@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 from setuptools import setup, find_packages
 from pip.req import parse_requirements
+import pewpew
 import pip
 import os
 
@@ -14,7 +15,7 @@ if os.path.exists(requirements_path):
 
 setup(
     name='pewpew',
-    version='0.1.0',
+    version=pewpew.__version__,
     description="PEW stands for Process Event-Wise. As this library does multiprocessing, this is PEW PEW.",
     long_description="TODO: Fill in",
     author="Kevin Wierman",

@@ -21,6 +21,7 @@ test:
 docs:
 	rm -f docs/pewpew.rst
 	rm -f docs/modules.rst
+	pip install -r requirements_doc.txt
 	sphinx-apidoc -o docs/ pewpew
 	$(MAKE) -C docs clean
 	$(MAKE) -C docs html
@@ -32,7 +33,7 @@ uninstall:
 	pip uninstall pewpew
 
 docserver:
-	cd docs/_build/html && python -m SimpleHTTPServer 9000
+	cd docs/_build/html && python -m http.server 9000
 
 venv:
 	python3 -m venv .pewpew

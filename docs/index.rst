@@ -1,5 +1,5 @@
-# PEW PEW
-
+Welcome to the PEW PEW Documentation!
+=========================================================
 
 [![Updates](https://pyup.io/repos/github/kwierman/pewpew/shield.svg)](https://pyup.io/repos/github/kwierman/pewpew/)
 [![Python 3](https://pyup.io/repos/github/kwierman/pewpew/python-3-shield.svg)](https://pyup.io/repos/github/kwierman/pewpew/)
@@ -11,3 +11,21 @@ PEW stands for Process Event-Wise. As this library does multiprocessing, this is
 * Open Source License: MIT license
 * Documentation: https://pewpew.readthedocs.io.
 
+
+Contents:
+
+.. toctree::
+   :maxdepth: 2
+
+   installation
+   usage
+   modules
+   contributions
+
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
