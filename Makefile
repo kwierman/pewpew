@@ -27,10 +27,14 @@ docs:
 	$(MAKE) -C docs html
 
 install: clean
+	pip install -r requirements.txt
 	python setup.py install
 
 uninstall:
 	pip uninstall pewpew
+
+dev_install: install
+	pip install -r requirements_dev.txt
 
 docserver:
 	cd docs/_build/html && python -m http.server 9000
