@@ -33,7 +33,7 @@ uninstall:
 	pip uninstall pewpew
 
 docserver:
-	cd docs/_build/html && python -m SimpleHTTPServer 9000
+	cd docs/_build/html && python -m http.server 9000
 
 venv:
 	python3 -m venv .pewpew
