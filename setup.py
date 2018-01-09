@@ -30,7 +30,6 @@ setup(
     },
     include_package_data=True,
     install_requires=install_reqs,
-    setup_requires=reqs,
     license="MIT license",
     zip_safe=False,
     keywords='pewpew',
@@ -48,5 +47,6 @@ setup(
         'Programming Language :: Python :: 3.5',
     ],
     test_suite='tests',
-    tests_require=dev_reqs
+    tests_requires=reqs,
+    setup_requires=reqs
 )
