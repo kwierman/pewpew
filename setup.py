@@ -7,10 +7,12 @@ from pip.req import parse_requirements
 import pip
 
 
-install_reqs = reqs = [str(ir.req) for ir in parse_requirements('requirements.txt',
-    session=pip.download.PipSession())]
-dev_reqs = [str(ir.req) for ir in parse_requirements('requirements_dev.txt',
-    session=pip.download.PipSession())]
+this_path = os.path.abspath(os.path.join(__file__,'..'))
+requirements_path = os.path.join(this_path, 'requirements.txt')
+reqs=[]
+if os.path.exists(requirements_path):
+    reqs = [str(ir.req) for ir in parse_requirements(requirements_path,
+        session=pip.download.PipSession())]
 
 setup(
     name='pewpew',
@@ -29,7 +31,7 @@ setup(
         ]
     },
     include_package_data=True,
-    install_requires=install_reqs,
+    install_requires=reqs,
     license="MIT license",
     zip_safe=False,
     keywords='pewpew',
