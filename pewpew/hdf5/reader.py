@@ -22,7 +22,7 @@ def get_dataset(input_file):
         return ret
 
     def ds_filter(item, input_file):
-        return type(input_file[item]) == h5py._hl.dataset.dataset
+        return type(input_file[item]) == h5py._hl.dataset.Dataset
 
     return [i for i in walk_file_tree(input_file) if ds_filter(i, input_file)]
 
@@ -52,7 +52,6 @@ class Reader(StreamElement):
         return ret
 
     def process(self, data=None):
-        # If no file, then get next
         while self.file is None:
             if self.file_iter is None:
                 self.file_iter = file_iter(self.file_list)

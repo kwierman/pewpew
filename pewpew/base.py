@@ -39,7 +39,7 @@ class StreamElement(Process):
     def get_data(self):
         if self.inqueue is not None:
             try:
-                return self.inqueue.get(self.timeout)
+                return self.inqueue.get(timeout=self.timeout)
             except TimeoutError:
                 self.graceful_exit = False
                 return None
@@ -54,9 +54,9 @@ class StreamElement(Process):
         if self.outqueue is not None:
             if isinstance(data, list):
                 for i in data:
-                    self.outqueue.put(copy.copy(i), self.timeout)
+                    self.outqueue.put(copy.copy(i), timeout=self.timeout)
             else:
-                self.outqueue.put(copy.copy(data), self.timeout)
+                self.outqueue.put(copy.copy(data), timeout=self.timeout)
 
     def valid_data(self, data):
         if isinstance(data, dict):
