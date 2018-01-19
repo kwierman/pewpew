@@ -1,4 +1,5 @@
-from multiprocessing import Process, Queue, TimeoutError
+from multiprocessing import Process, Queue, TimeoutError, Value
+from multiprocessing.queues import Empty
 from abc import abstractmethod, ABCMeta
 import logging
 import copy
@@ -40,7 +41,7 @@ class StreamElement(Process):
         if self.inqueue is not None:
             try:
                 return self.inqueue.get(timeout=self.timeout)
-            except TimeoutError:
+            except (TimeoutError, Empty):
                 self.graceful_exit = False
                 return None
         return {}
@@ -67,7 +68,7 @@ class StreamElement(Process):
 
     @signal_exit_on_failure
     def on_input_completed(self):
-        self.log.info("received completedop from upstream")
+        self.log.info("received completed from upstream")
         output = self.on_completion()
         if self.valid_data(output):
             self.put_data(data=output)
@@ -121,3 +122,7 @@ class StreamElement(Process):
     def on_completion(self):
         self.log.debug("completing")
         self.graceful_exit = False
+
+
+def exit_flag():
+    return Value('b', True)
