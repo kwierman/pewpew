@@ -1,3 +1,6 @@
+""" The base class for PEWPEW processing. See :doc:`usage`.
+"""
+
 from multiprocessing import Process, Queue, TimeoutError, Value
 from multiprocessing.queues import Empty
 from abc import abstractmethod, ABCMeta
@@ -6,11 +9,30 @@ import copy
 
 
 class StreamElement(Process):
+    """ Subclass this abstract class for concrete implementation
+    of pewpew processing
+    """
 
     log = logging.getLogger('pewpew.streamelement')
     __metaclass__ = ABCMeta
 
     def __init__(self, exit_flag, inqueue=None, outqueue=None, **kwargs):
+        """ The base constructor must always be called by the subclass.
+
+        Parameters:
+        ==========
+
+        exit_flag: multiprocessing.Value
+            A global exit flag. When set to `False`, will cause all
+            threads to exit gracefully.
+
+        inqueue: multiprocessing.Queue
+            Data queue for incoming data.
+
+        outqueue: multiprocessing.Queue
+            Data queue for outgoing data.
+
+        """
         super(StreamElement, self).__init__()
         self.inqueue = inqueue
         self.outqueue = outqueue
@@ -21,6 +43,9 @@ class StreamElement(Process):
         self.queuelen = int(kwargs.get("default_queuelen", 10))
 
     def signal_exit_on_failure(fn):
+        """Helper decorator which sets appropriate flags when exceptions
+        occur in daughter processes.
+        """
         def wrapped(self=None, **kwargs):
             try:
                 return fn(self, **kwargs)
@@ -31,6 +56,9 @@ class StreamElement(Process):
         return wrapped
 
     def run(self):
+        """Called by multiprocessing.Process.
+        Executes main event loop for process.
+        """
         self.event_loop()
         msg = "exiting with flags {} {}"
         self.log.info(msg.format(self.exit_flag.value,

@@ -1,6 +1,13 @@
 pewpew package
 ==============
 
+Subpackages
+-----------
+
+.. toctree::
+
+    pewpew.hdf5
+
 Submodules
 ----------
 
