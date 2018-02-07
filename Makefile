@@ -16,7 +16,7 @@ clean-pyc:
 	find . -name '__pycache__' -exec rm -fr {} +
 
 test:
-	pytest --flake8
+	pytest --flake8 --cov=pewpew tests/
 
 travis_test:
 	flake8 pewpew

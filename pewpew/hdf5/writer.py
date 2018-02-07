@@ -1,3 +1,7 @@
+"""HDF5 File writer.
+"""
+
+
 from ..base import StreamElement
 import logging
 import h5py
@@ -78,7 +82,7 @@ class Writer(StreamElement):
                                                       b_shape,
                                                       maxshape=max_shape,
                                                       chunks=b_shape,
-                                                      dtype='float',
+                                                      dtype=data['data'][dataname].dtype,
                                                       compression="lzf")
                 self.output_datasets[dataname] = tmp
 

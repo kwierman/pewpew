@@ -1,2 +1,5 @@
 pytest-flake8==0.9.1
 mock==2.0.0
+numpy==1.14.0
+h5py==2.7.1
+click==6.7

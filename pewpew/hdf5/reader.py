@@ -1,3 +1,6 @@
+""" HDF5 File Reader
+"""
+
 from ..base import StreamElement
 import logging
 import h5py
@@ -21,10 +24,22 @@ class Reader(StreamElement):
         self.event_number = None
 
     def _file_iter_(self):
+        """ Returns an iterator over the file list
+        """
         for file_ in self.file_list:
             yield h5py.File(file_, 'r')
 
     def get_dataset(self, input_file):
+        """ Walks along the object tree in an HDF5 file and inspects it for
+        datasets.
+
+
+        Parameters:
+        ===========
+
+        input_file: h5py.File
+            The file to be inspected.
+        """
 
         def walk_tree(obj, path='/'):
             ret = [path]
@@ -42,6 +57,8 @@ class Reader(StreamElement):
         return ret
 
     def get_metadata(self):
+        """ Get a dict of the file attributes and the corresponding objects.
+        """
         ret = {}
         for i in self._read_list_:
             ret[i] = {}
@@ -50,6 +67,11 @@ class Reader(StreamElement):
         return ret
 
     def process(self, data=None):
+        """ Takes input `data` and writes to the file.
+
+        This module expects `data` to be a dict with 2 keys:
+        'meta' and 'data'. 
+        """
         while self.file is None:
             if self.file_iter is None:
                 self.file_iter = self._file_iter_()
