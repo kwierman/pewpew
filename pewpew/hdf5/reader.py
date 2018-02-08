@@ -70,7 +70,7 @@ class Reader(StreamElement):
         """ Takes input `data` and writes to the file.
 
         This module expects `data` to be a dict with 2 keys:
-        'meta' and 'data'. 
+        'meta' and 'data'.
         """
         while self.file is None:
             if self.file_iter is None:

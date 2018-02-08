@@ -76,13 +76,14 @@ class Writer(StreamElement):
             for dataname in data['data'].keys():
                 b_shape = (self.chunk_size, ) + data['data'][dataname].shape
                 max_shape = (None, ) + data['data'][dataname].shape
+                dt = data['data'][dataname].dtype
                 msg = "creating dataset {} with shape {}"
                 self.log.debug(msg.format(dataname, b_shape))
                 tmp = self.output_file.create_dataset(dataname,
                                                       b_shape,
                                                       maxshape=max_shape,
                                                       chunks=b_shape,
-                                                      dtype=data['data'][dataname].dtype,
+                                                      dtype=dt,
                                                       compression="lzf")
                 self.output_datasets[dataname] = tmp
 
