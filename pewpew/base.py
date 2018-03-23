@@ -38,8 +38,12 @@ class StreamElement(Process):
         self.inqueue = inqueue
         self.outqueue = outqueue
         self.kwargs = kwargs
-        self.exit_flag = exit_flag
-        self.graceful_exit = True
+
+        self.fail_flag = exit_flag  # Signals False if failure has occurred
+        self.graceful_exit = True  # Signals True if ready to gracefully exit
+        self.input_flags = []  # Holds values from inputs to signal chain exit
+        self.exit_flag = Value('b', True)  # For forwarding
+
         self.timeout = int(kwargs.get("timeout", 120))
         self.queuelen = int(kwargs.get("default_queuelen", 10))
 
@@ -53,7 +57,7 @@ class StreamElement(Process):
             except Exception as e:
                 self.log.info("signaling exit to all processes")
                 self.log.warning(e)
-                self.exit_flag.value = False
+                self.fail_flag.value = False
                 raise e
         return wrapped
 
@@ -63,11 +67,13 @@ class StreamElement(Process):
         """
         self.event_loop()
         msg = "exiting with flags {} {}"
-        self.log.info(msg.format(self.exit_flag.value,
+        self.log.info(msg.format(self.fail_flag.value,
                                  self.graceful_exit))
 
     @signal_exit_on_failure
     def get_data(self):
+        if not self.check_input_flags():
+            self.timeout = 0
         if self.inqueue is not None:
             try:
                 return self.inqueue.get(timeout=self.timeout)
@@ -106,7 +112,9 @@ class StreamElement(Process):
     @signal_exit_on_failure
     def event_loop(self):
         self.on_start()
-        while self.exit_flag.value and self.graceful_exit:
+        while self.fail_flag.value and self.graceful_exit:
+            if not self.exit_flag.value:
+                break
             data = self.get_data()
             if data is None:
                 continue
@@ -122,10 +130,12 @@ class StreamElement(Process):
                 self.inqueue = Queue(self.queuelen)
             for other_element in other:
                 other_element.outqueue = self.inqueue
+                self.input_flags.append(other_element.exit_flag)
         elif other.outqueue is None:
             if self.inqueue is None:
                 self.inqueue = Queue(self.queuelen)
             other.outqueue = self.inqueue
+            self.input_flags.append(other.exit_flag)
 
     def set_output(self, other):
         if type(other) is list:
@@ -133,10 +143,18 @@ class StreamElement(Process):
                 self.outqueue = Queue(self.queuelen)
             for other_element in other:
                 other_element.inqueue = self.outqueue
+                other_element.input_flags.append(self.exit_flag)
         elif other.inqueue is None:
             if self.outqueue is None:
                 self.outqueue = Queue(self.queuelen)
             other.inqueue = self.outqueue
+            other.input_flags.append(self.exit_flag)
+
+    def check_input_flags(self):
+        ret = True
+        for flag in self.input_flags:
+            ret &= flag.value
+        return ret
 
     @signal_exit_on_failure
     def __process__(self, data):
@@ -147,6 +165,8 @@ class StreamElement(Process):
         raise NotImplementedError()
 
     def on_start(self):
+        """ Override this method to
+        """
         self.log.debug("starting")
 
     def on_completion(self):

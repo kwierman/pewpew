@@ -41,7 +41,7 @@ class TestStreamElement(unittest.TestCase):
         instance.process = lambda x: x.not_a_method
         with pytest.raises(Exception) as excinfo:
             instance.run()
-        assert(not instance.exit_flag.value)
+        assert(not instance.fail_flag.value)
         self.exit_flag.value = True
 
     def test_run(self):
