@@ -75,6 +75,7 @@ class StreamElement(Process):
         if not self.check_input_flags():
             self.log.debug("Inputs are finished. Setting timeout to 0.")
             self.timeout = 0
+            self.exit_flag.value = True
         if self.inqueue is not None:
             try:
                 return self.inqueue.get(timeout=self.timeout)
@@ -124,7 +125,7 @@ class StreamElement(Process):
                 continue
             self.put_data(data=output)
         self.on_input_completed()
-        self.exit_flag = False
+        self.exit_flag.value = False
 
     def set_input(self, other):
         if type(other) is list:
