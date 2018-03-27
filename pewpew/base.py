@@ -2,7 +2,7 @@
 """
 
 from multiprocessing import Process, Queue, TimeoutError, Value
-from multiprocessing.queues import Empty
+from multiprocessing.queues import Empty, Full
 from abc import abstractmethod, ABCMeta
 import logging
 import copy
@@ -101,9 +101,14 @@ class StreamElement(Process):
         if self.outqueue is not None:
             if isinstance(data, list):
                 for i in data:
-                    self.outqueue.put(copy.copy(i), timeout=self.timeout)
+                    self.put_data(i)
             else:
-                self.outqueue.put(copy.copy(data), timeout=self.timeout)
+                try:
+                    self.outqueue.put(copy.copy(data), timeout=self.timeout)
+                except (TimeoutError, Full) as e:
+                    msg = "Failed putting data in queue: {}".format(e)
+                    self.log.warning(msg)
+                    self.exit_flag.value = False
 
     def valid_data(self, data):
         if isinstance(data, dict):
@@ -114,7 +119,6 @@ class StreamElement(Process):
 
     @signal_exit_on_failure
     def on_input_completed(self):
-        self.log.info("received completed from upstream")
         output = self.on_completion()
         if self.valid_data(output):
             self.put_data(data=output)
@@ -130,6 +134,10 @@ class StreamElement(Process):
             if output is None:
                 continue
             self.put_data(data=output)
+        msg = 'Exiting Loop with flags\tFail:{}\tExit:{}\tParent:{}'
+        self.log.info(msg.format(self.fail_flag.value,
+                                 self.exit_flag.value,
+                                 self.check_input_flags()))
         self.on_input_completed()
         self.exit_flag.value = False
 
@@ -160,9 +168,11 @@ class StreamElement(Process):
             other.input_flags.append(self.exit_flag)
 
     def check_input_flags(self):
-        ret = True
+        if len(self.input_flags) == 0:
+            return True
+        ret = False
         for flag in self.input_flags:
-            ret &= flag.value
+            ret |= flag.value
         return ret
 
     @signal_exit_on_failure
