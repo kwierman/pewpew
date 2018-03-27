@@ -40,7 +40,6 @@ class StreamElement(Process):
         self.kwargs = kwargs
 
         self.fail_flag = exit_flag  # Signals False if failure has occurred
-        self.graceful_exit = True  # Signals True if ready to gracefully exit
         self.input_flags = []  # Holds values from inputs to signal chain exit
         self.exit_flag = Value('b', True)  # For forwarding
 
@@ -67,20 +66,29 @@ class StreamElement(Process):
         """
         self.event_loop()
         msg = "exiting with flags {} {}"
-        self.log.info(msg.format(self.fail_flag.value,
-                                 self.graceful_exit))
+        self.log.debug(msg.format(self.fail_flag.value,
+                                  self.exit_flag.value))
 
     @signal_exit_on_failure
     def get_data(self):
+        """ Gets data from the input Queue.
+
+        Returns
+        =======
+
+        A dict of pickle-able objects.
+        """
         if not self.check_input_flags():
-            self.log.debug("Inputs are finished. Setting timeout to 0.")
+            self.log.debug("Inputs are finished. Setting timeout to 1.")
             self.timeout = 0
-            self.exit_flag.value = True
         if self.inqueue is not None:
             try:
                 return self.inqueue.get(timeout=self.timeout)
             except (TimeoutError, Empty):
-                self.graceful_exit = False
+                if not self.check_input_flags():
+                    self.exit_flag.value = False
+                else:
+                    self.fail_flag.value = False
                 return None
         return {}
 
@@ -114,9 +122,7 @@ class StreamElement(Process):
     @signal_exit_on_failure
     def event_loop(self):
         self.on_start()
-        while self.fail_flag.value and self.graceful_exit:
-            if not self.exit_flag.value:
-                break
+        while self.fail_flag.value and self.exit_flag.value:
             data = self.get_data()
             if data is None:
                 continue
@@ -174,7 +180,7 @@ class StreamElement(Process):
 
     def on_completion(self):
         self.log.debug("completing")
-        self.graceful_exit = False
+        self.exit_flag.value = False
 
 
 def exit_flag():

@@ -12,13 +12,13 @@ import sys
 from contextlib import contextmanager
 
 from pewpew.base import StreamElement, exit_flag
-from multiprocessing import Value
 
 
 class MyStreamElement(StreamElement):
 
     def process(self, data):
         print("In Process!")
+        self.exit_flag = False
         return None
 
 
@@ -33,7 +33,7 @@ class TestStreamElement(unittest.TestCase):
     def test_init(self):
         instance = MyStreamElement(self.exit_flag)
         assert(instance.timeout == 120)
-        assert(instance.graceful_exit)
+        assert(instance.exit_flag.value)
 
     def test_signal_on_failure(self):
         self.exit_flag.value = True
@@ -47,8 +47,10 @@ class TestStreamElement(unittest.TestCase):
     def test_run(self):
         self.exit_flag.value = False
         instance = MyStreamElement(self.exit_flag)
-        instance.run()
+        instance.start()
         self.exit_flag.value = True
+        instance.join()
+        assert(not instance.is_alive())
 
     def test_get_data(self):
         self.exit_flag.value = False
@@ -71,7 +73,7 @@ class TestStreamElement(unittest.TestCase):
         self.exit_flag.value = False
         instance = MyStreamElement(self.exit_flag)
         instance.run()
-        assert(instance.graceful_exit == False)
+        assert(instance.exit_flag.value == False)
 
     def test_set_input(self):
         inst1 = MyStreamElement(self.exit_flag)
