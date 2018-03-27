@@ -83,9 +83,7 @@ class StreamElement(Process):
             self.timeout = 0
         if self.inqueue is not None:
             try:
-                ret = self.inqueue.get(timeout=self.timeout)
-                self.inqueue.task_done()
-                return ret
+                return self.inqueue.get(timeout=self.timeout)
             except (TimeoutError, Empty):
                 if not self.check_input_flags():
                     self.exit_flag.value = False
