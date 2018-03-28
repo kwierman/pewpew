@@ -45,6 +45,7 @@ class StreamElement(Process):
 
         self.timeout = int(kwargs.get("timeout", 120))
         self.queuelen = int(kwargs.get("default_queuelen", 10))
+        self.n_tries = int(kwargs.get("n_tries", 10))
 
     def signal_exit_on_failure(fn):
         """Helper decorator which sets appropriate flags when exceptions
@@ -94,6 +95,23 @@ class StreamElement(Process):
 
     @signal_exit_on_failure
     def put_data(self, data):
+        """ Attempts to put data on the queue for the next node.
+        If the data is a list, then it puts the data on the queue
+        one item at a time.
+
+        Parameters:
+        ===========
+
+        data : list or dict
+            The data to put on the queue.
+
+        Note:
+        =====
+
+        This function must be called as `self.put_data(data={})`. Where
+        the argument keyword must be used explicitely.
+
+        """
         if not self.valid_data(data):
             msg = "cannot understand output data type: {}"
             self.log.warning(msg.format(type(data)))
@@ -103,12 +121,22 @@ class StreamElement(Process):
                 for i in data:
                     self.put_data(i)
             else:
-                try:
-                    self.outqueue.put(copy.copy(data), timeout=self.timeout)
-                except (TimeoutError, Full) as e:
-                    msg = "Failed putting data in queue: {}".format(e)
-                    self.log.warning(msg)
-                    self.exit_flag.value = False
+                for try_ in range(self.n_tries):
+                    success = False
+                    try:
+                        self.outqueue.put(copy.copy(data),
+                                          timeout=self.timeout)
+                        success = True
+                    except (TimeoutError, Full) as e:
+                        msg = "Failed putting data in queue: {}".format(e)
+                        self.log.warning(msg)
+                        if try_ == self.n_tries-1:
+                            self.exit_flag.value = False
+                            raise e
+                        else:
+                            self.log.warning("Trying again")
+                    if success:
+                        break
 
     def valid_data(self, data):
         if isinstance(data, dict):
