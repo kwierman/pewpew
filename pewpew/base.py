@@ -119,7 +119,7 @@ class StreamElement(Process):
         if self.outqueue is not None:
             if isinstance(data, list):
                 for i in data:
-                    self.put_data(i)
+                    self.put_data(data=i)
             else:
                 for try_ in range(self.n_tries):
                     success = False
@@ -168,6 +168,10 @@ class StreamElement(Process):
                                  self.check_input_flags()))
         self.on_input_completed()
         self.exit_flag.value = False
+        if self.outqueue is not None:
+            self.outqueue.close()
+        if self.inqueue is not None:
+            self.inqueue.close()
 
     def set_input(self, other):
         if type(other) is list:
