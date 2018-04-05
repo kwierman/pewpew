@@ -5,16 +5,13 @@ import os
 
 
 class Writer(StreamElement):
-    log = logging.getLogger('pewpew.writer')
+    log = logging.getLogger('pewpew.hdf5.writer')
 
-    def __init__(self, exit_flag, inqueue=None, outqueue=None, **kwargs):
-        super(Writer, self).__init__(exit_flag, inqueue=None,
-                                     outqueue=None, **kwargs)
-
-        self.output_name = kwargs.get("filename", "output")
-        self.n_events = kwargs.get("events_per_file", None)
-        self.output_path = kwargs.get("output_path", ".")
-        self.chunk_size = kwargs.get('chunk_size', 1)
+    def on_start(self):
+        self.output_name = self.config.get("filename", "output")
+        self.n_events = self.config.get("events_per_file", None)
+        self.output_path = self.config.get("output_path", ".")
+        self.chunk_size = self.config.get('chunk_size', 1)
         self.output_file = None
         self.current_cycle = 0
         self.current_event = 0

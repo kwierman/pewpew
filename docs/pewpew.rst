@@ -6,6 +6,9 @@ Subpackages
 
 .. toctree::
 
+    pewpew.celery
+    pewpew.csv
+    pewpew.examples
     pewpew.hdf5
 
 Submodules

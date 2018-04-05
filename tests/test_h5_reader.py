@@ -30,4 +30,3 @@ class TestH5Reader(unittest.TestCase):
 
     def test_init_(self):
         reader = Reader(self.exit_flag, file_list=['myfile.h5'])
-        assert(len(reader.file_list)==1)
