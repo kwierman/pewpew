@@ -15,15 +15,10 @@ PEW stands for Process Event-Wise. As this library does multiprocessing, this is
 
 # TODOS
 
-* Complete the CSV implementation [check]
-	* With JSON for metadata dumping [check]
-* Better handling of queues with unit tests to back up emptying each queue [Ehhhh...]
-* Exception handling. See above bullet point [Good so far]
 * Common Utilities
 	* Filtering
 * Timing to see where processes are spending time
-* Exit Flag
 * CLI for condensing files
-* Documentation
 * Increase Test Coverage
 * Celery implementation
+* Logging setup
