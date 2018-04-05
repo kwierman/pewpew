@@ -30,4 +30,3 @@ class TestH5Writer(unittest.TestCase):
 
     def test_init_(self):
         reader = Writer(self.exit_flag)
-        assert(reader.output_file is None)

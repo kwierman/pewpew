@@ -5,13 +5,12 @@ import os
 
 
 class Reader(StreamElement):
-    log = logging.getLogger('pewpew.reader')
+    log = logging.getLogger('pewpew.hdf5.reader')
 
-    def __init__(self, exit_flag, inqueue=None, outqueue=None, **kwargs):
-        super(Reader, self).__init__(exit_flag, inqueue=None,
-                                     outqueue=None, **kwargs)
-        self.file_list = kwargs.get('file_list', [])
-        self.repeat = kwargs.get('repeat', False)
+    def on_start(self):
+
+        self.file_list = self.config.get('file_list', [])
+        self.repeat = self.config.get('repeat', False)
         self.file = None
         self.file_iter = None
         self.event_iter = None
