@@ -10,6 +10,7 @@ Subpackages
     pewpew.csv
     pewpew.examples
     pewpew.hdf5
+    pewpew.json
 
 Submodules
 ----------

@@ -9,6 +9,7 @@ import copy
 
 
 __default_exit_flag__ = Value('b', True)
+__fmt__ = "%(levelname)s: %(asctime)s - %(name)s - %(process)s - %(message)s"
 
 
 class StreamElement(Process):
@@ -17,7 +18,6 @@ class StreamElement(Process):
     of pewpew processing
     """
 
-    log = logging.getLogger('pewpew.streamelement')
     __metaclass__ = ABCMeta
 
     def __init__(self, exit_flag=None, inqueue=None, outqueue=None, **kwargs):
@@ -75,6 +75,11 @@ class StreamElement(Process):
         msg = "exiting with flags {} {}"
         self.log.debug(msg.format(self.fail_flag.value,
                                   self.exit_flag.value))
+
+    def _log_(self):
+        log = logging.getLogger(str(self.__class__).split('\'')[1])
+        # formatter = logging.Formatter(__fmt__)
+        return log
 
     @signal_exit_on_failure
     def get_data(self):
@@ -182,6 +187,7 @@ class StreamElement(Process):
         =====
         DO NOT OVERWRITE.
         """
+        self.log = self._log_()
         self.on_start()
 
         while self.fail_flag.value and self.exit_flag.value:

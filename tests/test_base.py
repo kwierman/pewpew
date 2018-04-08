@@ -18,7 +18,7 @@ class MyStreamElement(StreamElement):
 
     def process(self, data):
         print("In Process!")
-        self.exit_flag = False
+        self.exit_flag.value = False
         return None
 
 
@@ -93,3 +93,9 @@ class TestStreamElement(unittest.TestCase):
         inst1.inqueue = q_tst
         inst1.set_input(inst2)
         assert(inst2.outqueue == q_tst)
+
+    def test_data_insertion(self):
+        inst1 = MyStreamElement(self.exit_flag)
+        
+
+        
