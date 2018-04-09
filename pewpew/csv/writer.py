@@ -41,7 +41,6 @@ class Writer(StreamElement):
                 self.output_file.close()
                 self.output_file = None
                 self.current_event = 0
-                self.current_cycle += 1
 
         if self.output_file is None:
             if os.path.exists(self.path):
@@ -53,4 +52,6 @@ class Writer(StreamElement):
             field_names = [i for i in data['data'].keys()]
             self.writer = csv.DictWriter(self.output_file,
                                          fieldnames=field_names)
+            self.writer.writeheader()
         self.writer.writerow(data['data'])
+        self.current_event += 1
