@@ -23,9 +23,17 @@ class SingleStreamElement(StreamElement):
 
 
 class MultiStreamElement(StreamElement):
+
+    def on_start(self):
+        self.counter = Value('i',0)
+
     def process(self, data):
         assert(data is not None)
+        self.counter.value += 1
         return data
+
+    def on_completion(self):
+        assert(self.counter.value == 10)
 
 
 class TestDataStream(unittest.TestCase):
@@ -37,8 +45,9 @@ class TestDataStream(unittest.TestCase):
         queue.put({'data':None, 'meta':None})
         instance.start()
         instance.join()
-        instance = None
+        assert(not instance.is_alive())
         assert(queue.empty())
+        instance = None
 
     def test_double_data_insertion(self):
         queue = Queue()
@@ -51,6 +60,7 @@ class TestDataStream(unittest.TestCase):
         instance.start()
         flag.value = False
         instance.join()
+        assert(not instance.is_alive())
         assert(not queue.empty())
         instance = None
 
@@ -66,3 +76,5 @@ class TestDataStream(unittest.TestCase):
         flag.value = False
         instance.join()
         assert(queue.empty())
+        assert(not instance.is_alive())
+        instance = None
