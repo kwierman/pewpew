@@ -1,10 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from setuptools import setup, find_packages
-from pip.req import parse_requirements
 import pewpew
 import pip
 import os
+
+try: # for pip >= 10
+    from pip._internal.req import parse_requirements
+except ImportError: # for pip <= 9.0.3
+    from pip.req import parse_requirements
 
 this_path = os.path.abspath(os.path.join(__file__,'..'))
 requirements_path = os.path.join(this_path, 'requirements.txt')
