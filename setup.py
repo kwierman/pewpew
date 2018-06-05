@@ -5,17 +5,20 @@ import pewpew
 import pip
 import os
 
+session = None
 try: # for pip >= 10
     from pip._internal.req import parse_requirements
+    session = pip._internal.download.PipSession()
 except ImportError: # for pip <= 9.0.3
     from pip.req import parse_requirements
+    session = pip.download.PipSession()
 
 this_path = os.path.abspath(os.path.join(__file__,'..'))
 requirements_path = os.path.join(this_path, 'requirements.txt')
 reqs=[]
 if os.path.exists(requirements_path):
     reqs = [str(ir.req) for ir in parse_requirements(requirements_path,
-        session=pip.download.PipSession())]
+        session=session)]
 
 setup(
     name='pewpew',
