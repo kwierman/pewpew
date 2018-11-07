@@ -198,7 +198,7 @@ class StreamElement(Process):
             if output is None:
                 continue
             self.put_data(data=output)
-        msg = 'Exiting Loop with flags\tFail:{}\tExit:{}\Inputs:{}'
+        msg = 'Exiting Loop with flags\tFail:{}\tExit:{}\tInputs:{}'
         self.log.info(msg.format(bool(self.fail_flag.value),
                                  bool(self.exit_flag.value),
                                  bool(self.check_input_flags())))
