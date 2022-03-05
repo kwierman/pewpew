@@ -1,2 +1,2 @@
 mock==4.0.3
-pytest-flake8==1.0.7
+pytest-flake8==1.1.0
