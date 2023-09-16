@@ -1,4 +1,4 @@
 celery==5.2.7
 h5py==3.8.0
-numpy==1.24.3
+numpy==1.26.0
 click==	8.1.3
